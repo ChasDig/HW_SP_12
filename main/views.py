@@ -1,3 +1,5 @@
+import logging
+from json import JSONDecodeError
 from flask import Flask, Blueprint, render_template, request
 from functions import search_page
 
@@ -17,6 +19,14 @@ def add_page_main():
 def main_search_page():
 
     search_meaning = request.args['s']
-    result_search_page = search_page(search_meaning)
+    logging.info("Выполняется поиск!")
+
+    # 6-7: Error handler:
+    try:
+        result_search_page = search_page(search_meaning)
+    except FileNotFoundError:
+        return "Файл не найден!"
+    except JSONDecodeError:
+        return "Невалидный файл"
 
     return render_template('post_list.html', posts=result_search_page, meaning=search_meaning)
